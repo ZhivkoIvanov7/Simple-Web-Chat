@@ -1,12 +1,11 @@
 const express = require('express');
-const app = express();
 const config = require('./config');
+const app = express();
 
 const http = require("http");
 const server = http.createServer(app);
 
-const { Server } = require("socket.io");
-const io = new Server(server);
+const io = require("socket.io")(server);
 
 app.use(express.static("src/public"));
 
@@ -14,14 +13,14 @@ app.get("/", (req, res) =>{
     res.sendFile(__dirname + "/src/public/index.html");
 });
 
-io.on('connection', socket => {
-    socket.on("newuser", nickname => {
-        socket.broadcast.emit("update", nickname + "joined the conversation");
+io.on('connection', function(socket) {
+    socket.on("newuser", function(nickname) {
+        socket.broadcast.emit("update", nickname + " is in the chat room");
     });
-    socket.on("exituser", nickname => {
-        socket.broadcast.emit("update", nickname + "left the conversation");
+    socket.on("exituser", function(nickname) {
+        socket.broadcast.emit("update", nickname + " left the chat room");
     });
-    socket.on("chat", message => {
+    socket.on("chat", function(message) {
         socket.broadcast.emit("chat", message);
     });
 });

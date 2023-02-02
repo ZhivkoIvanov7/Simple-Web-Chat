@@ -73,7 +73,7 @@ body {
 }
 .chat-screen .messages {
     width: 100%;
-    height: calc(100% - 105px);
+    height: calc(80% - 100px);
     background: whitesmoke;
     overflow: auto;
 }

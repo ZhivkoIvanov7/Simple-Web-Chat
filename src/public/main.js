@@ -46,9 +46,10 @@ socket.on("chat", function (message) {
 });
 
 socket.on('activeUsers', users => {
-    let userList = '';
+    let userList = '<div><h3>Active Users:</h3>';
   users.forEach(user => {
     userList += `<div>${user.nickname}</div>`;
+    userList += '</div>'
   });
   document.querySelector('.active-users').innerHTML = userList;
 });

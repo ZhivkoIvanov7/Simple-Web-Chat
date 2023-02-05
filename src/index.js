@@ -19,21 +19,17 @@ let activeUsers = [];
 io.on('connection', function(socket) {
     socket.on("newuser", function(nickname) {
         socket.broadcast.emit("update", nickname + " joined the chat room.");
-    });
-    socket.on("exituser", function(nickname) {
-        socket.broadcast.emit("update", nickname + " left the chatroom.");
-    });
-    socket.on("chat", function(message) {
-        socket.broadcast.emit("chat", message);
-    });
-    socket.on('newuser', nickname =>{
         socket.nickname = nickname;
         activeUsers.push({nickname});
         io.emit('activeUsers', activeUsers);
     });
-    socket.on('exituser', () =>{
+    socket.on("exituser", function(nickname) {
+        socket.broadcast.emit("update", nickname + " left the chat room.");
         activeUsers = activeUsers.filter(user => user.nickname !== socket.nickname);
         io.emit('activeUsers', activeUsers);
+    });
+    socket.on("chat", function(message) {
+        socket.broadcast.emit("chat", message);
     });
 });
 

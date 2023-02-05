@@ -1,4 +1,5 @@
 const app = document.querySelector(".app");
+
 const socket = io();
 
 let nname;
@@ -34,7 +35,6 @@ app.querySelector(".chat-screen #send-message").addEventListener('click', () => 
 app.querySelector(".chat-screen #exit-chat").addEventListener("click", () => {
     socket.emit("exituser", nname);
     window.location.href = window.location.href;
-    document.getElementById("exit-user")
 });
 
 socket.on("update", function (update) {
@@ -45,11 +45,19 @@ socket.on("chat", function (message) {
     renderMessage("other", message);
 });
 
+socket.on('activeUsers', users => {
+    let userList = '';
+  users.forEach(user => {
+    userList += `<div>${user.nickname}</div>`;
+  });
+  document.querySelector('.active-users').innerHTML = userList;
+});
+socket.emit('join', nickname);
+
 function renderMessage(type, message) {
     let today = new Date()
     let time = today.toLocaleTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*/, "$1");
     
-    let usersContainer = app.querySelector(".chat-screen .active-users");
     let messageContainer = document.querySelector(".chat-screen .messages");
     if (type == "my") {
         let el = document.createElement("div");
@@ -75,8 +83,7 @@ function renderMessage(type, message) {
         let el = document.createElement("div");
         el.setAttribute("class", "update");
         el.innerText = message;
-        usersContainer.appendChild(el);
+        messageContainer.appendChild(el);
     }
     message.scrollTop = messageContainer.scrollHeight - messageContainer.clientHeight;
 }
-

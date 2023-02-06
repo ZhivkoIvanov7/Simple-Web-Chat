@@ -21,15 +21,24 @@ app.querySelector(".chat-screen #send-message").addEventListener('click', () => 
     if (message.length == 0) {
         return;
     }
-    renderMessage("my", {
-        nickname: nname,
-        text: message
-    });
-    socket.emit("chat", {
-        nickname: nname,
-        text: message
-    });
-    app.querySelector(".chat-screen #message-input").value = "";
+    let parts = message.split(" ");
+    if (parts[0] === ":nick") {
+        if (parts.length >= 2) {
+            nname = parts[1];
+            socket.emit("nick", nname);
+            app.querySelector(".chat-screen #message-input").value = "";
+        }
+    } else {
+        renderMessage("my", {
+            nickname: nname,
+            text: message
+        });
+        socket.emit("chat", {
+            nickname: nname,
+            text: message
+        });
+        app.querySelector(".chat-screen #message-input").value = "";
+    }
 });
 
 app.querySelector(".chat-screen #exit-chat").addEventListener("click", () => {
@@ -37,9 +46,9 @@ app.querySelector(".chat-screen #exit-chat").addEventListener("click", () => {
     window.location.href = window.location.href;
 });
 
-socket.on("whisper", function(message){
+socket.on("whisper", function (message) {
     renderMessage("whisper", message);
-})
+});
 
 socket.on("update", function (update) {
     renderMessage("update", update);
@@ -51,18 +60,18 @@ socket.on("chat", function (message) {
 
 socket.on('activeUsers', users => {
     let userList = '<div><h3>Active Users:</h3>';
-  users.forEach(user => {
-    userList += `<div>${user.nickname}</div>`;
-    userList += '</div>'
-  });
-  document.querySelector('.active-users').innerHTML = userList;
+    users.forEach(user => {
+        userList += `<div>${user.nickname}</div>`;
+        userList += '</div>'
+    });
+    document.querySelector('.active-users').innerHTML = userList;
 });
 socket.emit('join', nickname);
 
 function renderMessage(type, message) {
     let today = new Date()
     let time = today.toLocaleTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*/, "$1");
-    
+
     let messageContainer = document.querySelector(".chat-screen .messages");
     if (type == "my") {
         let el = document.createElement("div");
@@ -84,7 +93,7 @@ function renderMessage(type, message) {
             </div>
             `;
         messageContainer.appendChild(el);
-    } else if (type === "whisper"){
+    } else if (type === "whisper") {
         let el = document.createElement("div");
         el.setAttribute("class", "message whisper-message");
         el.innerHTML = `

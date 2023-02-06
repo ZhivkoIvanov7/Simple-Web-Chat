@@ -74,15 +74,31 @@ function renderMessage(type, message) {
 
     let messageContainer = document.querySelector(".chat-screen .messages");
     if (type == "my") {
-        let el = document.createElement("div");
-        el.setAttribute("class", "message my-message");
-        el.innerHTML = `
+        let messageInput = document.getElementById("message-input").value;
+        let parts = messageInput.split(" ");
+        if (parts[0] === ":whisper") {
+            if (parts.length >= 3) {
+                let el = document.createElement("div");
+                el.setAttribute("class", "message my-message");
+                el.innerHTML = `
+                <div>
+                    <div class="name">${message.nickname} ${time}</div>
+                    <div class="text" style="color:blue;">To:${parts.slice(1).join(" ")}</div>
+                </div>
+                `;
+                messageContainer.appendChild(el);
+            }
+        } else {
+            let el = document.createElement("div");
+            el.setAttribute("class", "message my-message");
+            el.innerHTML = `
             <div>
                 <div class="name">${message.nickname} ${time}</div>
                 <div class="text">${message.text}</div>
             </div>
             `;
-        messageContainer.appendChild(el);
+            messageContainer.appendChild(el);
+        }
     } else if (type == "other") {
         let el = document.createElement("div");
         el.setAttribute("class", "message other-message");

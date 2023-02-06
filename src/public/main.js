@@ -37,6 +37,10 @@ app.querySelector(".chat-screen #exit-chat").addEventListener("click", () => {
     window.location.href = window.location.href;
 });
 
+socket.on("whisper", function(message){
+    renderMessage("whisper", message);
+})
+
 socket.on("update", function (update) {
     renderMessage("update", update);
 });
@@ -79,6 +83,16 @@ function renderMessage(type, message) {
                 <div class="text">${message.text}</div>
             </div>
             `;
+        messageContainer.appendChild(el);
+    } else if (type === "whisper"){
+        let el = document.createElement("div");
+        el.setAttribute("class", "message whisper-message");
+        el.innerHTML = `
+            <div>
+                <div class="name">${message.nickname} ${time}</div>
+                <div class="text" style="color:red;">${message.text}</div>
+            </div>
+        `;
         messageContainer.appendChild(el);
     } else if (type == "update") {
         let el = document.createElement("div");

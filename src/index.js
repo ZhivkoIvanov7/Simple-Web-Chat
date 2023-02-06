@@ -20,7 +20,7 @@ io.on('connection', function(socket) {
     socket.on("newuser", function(nickname) {
         socket.broadcast.emit("update", nickname + " joined the chat room.");
         socket.nickname = nickname;
-        activeUsers.push({nickname});
+        activeUsers.push({socketId: socket.id, nickname});
         io.emit('activeUsers', activeUsers);
     });
     socket.on("exituser", function(nickname) {
@@ -29,10 +29,30 @@ io.on('connection', function(socket) {
         io.emit('activeUsers', activeUsers);
     });
     socket.on("chat", function(message) {
-        socket.broadcast.emit("chat", message);
+        if(message.text[0] === ':'){
+            let parts = message.text.split(' ');
+            switch(parts[0]) {
+                case ':whisper':
+                    if(parts.length >= 3){
+                        let whisperNick = parts[1];
+                        let whisperMessage = parts.slice(2).join(' ');
+                        let recipient = activeUsers.find(user => user.nickname === whisperNick);
+                            socket.to(recipient.socketId).emit("whisper", {
+                                nickname: message.nickname,
+                                text: whisperMessage
+                            });
+                    } else {
+                        socket.emit("update", ":whisper <nickname> <message>");
+                    }
+                    break;
+            default:
+                socket.emit("update", "Unsupported command");
+            }
+        } else {
+            socket.broadcast.emit("chat", message);
+        }
     });
 });
-
 
 server.listen(config.PORT, () => {
     console.log(`Server is listening on port ${config.PORT}...`)

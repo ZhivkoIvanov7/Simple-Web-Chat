@@ -45,6 +45,9 @@ io.on('connection', function (socket) {
                         socket.emit("update", ":whisper <nickname> <message>");
                     }
                     break;
+                case ":quit":
+                    socket.emit("update", "Session terminated");
+                    break;
                 default:
                     socket.emit("update", "Unsupported command");
             }

@@ -22,7 +22,13 @@ app.querySelector(".chat-screen #send-message").addEventListener('click', () => 
         return;
     }
     let parts = message.split(" ");
-    if (parts[0] === ":nick") {
+    if (parts[0] === ":quit") {
+        socket.emit("exituser", nname);
+        app.querySelector(".chat-screen").classList.remove("active");
+        app.querySelector(".join-screen").classList.add("active");
+        app.querySelector(".chat-screen #message-input").value = "";
+        document.getElementById("nickname").value = "";
+    } else if (parts[0] === ":nick") {
         if (parts.length >= 2) {
             nname = parts[1];
             socket.emit("nick", nname);

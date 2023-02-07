@@ -72,7 +72,6 @@ socket.on('activeUsers', users => {
     });
     document.querySelector('.active-users').innerHTML = userList;
 });
-socket.emit('join', nickname);
 
 function renderMessage(type, message) {
     let today = new Date()
@@ -89,7 +88,7 @@ function renderMessage(type, message) {
                 el.innerHTML = `
                 <div>
                     <div class="name">${message.nickname} ${time}</div>
-                    <div class="text" style="color:blue;">To:${parts.slice(1).join(" ")}</div>
+                    <div class="text" style="color:red;">${parts.slice(2).join(" ")}</div>
                 </div>
                 `;
                 messageContainer.appendChild(el);

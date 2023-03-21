@@ -40,7 +40,7 @@ io.on('connection', function (socket) {
                         socket.to(recipient.socketId).emit("whisper", {
                             nickname: message.nickname,
                             text: whisperMessage
-                        });
+                        })
                     } else {
                         socket.emit("update", ":whisper <nickname> <message>");
                     }
